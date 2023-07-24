@@ -3,11 +3,17 @@
 @author: Rasmus Nielsen (rabni@geus.dk) and Jason Box (jeb@geus.dk)
 
 to read from Thredds server at https://thredds.geus.dk/thredds/catalog/SICE_Greenland_500m/catalog.html
+
 do:
+
     pip install opendap-protocol
+    
     conda update --all
+
 and
+
     conda install -c conda-forge netcdf4
+
 
 variables available, can take just what are needed instead of gathering the heavy product
 
