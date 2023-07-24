@@ -5,7 +5,7 @@ Created on Fri Mar 17 06:23:44 2023
 
 @author: jason
 
-outputs npy arrays and figures of SICE3 data
+plots SICE rasters
 
 ['ANG', 'AOD_550', 'O3_SICE', 'al', 'albedo_bb_planar_sw', 'albedo_bb_spherical_sw', 'albedo_spectral_planar_01',
  'albedo_spectral_planar_02', 'albedo_spectral_planar_03', 'albedo_spectral_planar_04', 'albedo_spectral_planar_05',
@@ -32,9 +32,23 @@ import numpy as np
 import os.path
 from glob import glob
 import rasterio
+from datetime import date, timedelta
+
+def datesx(date0,date1):
+    # difference between current and previous date
+    delta = timedelta(days=1)
+    # store the dates between two dates in a list
+    dates = []
+    while date0 <= date1:
+        # add current date to list by converting  it to iso format
+        dates.append(date0.isoformat())
+        # increment start date by timedelta
+        date0 += delta
+    print('Dates between', date0, 'and', date1)
+    print(dates)
+    return dates
 
 fs=24 ; th=1
-# plt.rcParams['font.sans-serif'] = ['Georgia']
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['axes.edgecolor'] = 'black'
 plt.rcParams['axes.grid'] = False
@@ -46,45 +60,35 @@ plt.rcParams["font.size"] = fs
 plt.rcParams['legend.fontsize'] = fs*0.8
 
 
-raw_data_path='/Users/jason/0_dat/S3/opendap/SW_Greenland/'
+region_name='Greenland'
 
-doys=pd.to_datetime(np.arange(1,366), format='%j')
-months=doys.strftime('%b')
-months_int=doys.strftime('%m').astype(int)
+raw_data_path='/Users/jason/0_dat/S3/opendap/'+region_name+'/'
 
-months=['Apr','May','Jun','Jul','Aug','Sep']
 
 years=np.arange(2017,2023).astype(str)
 # years=np.arange(2022,2023).astype(str)
-# years=np.arange(2018,2019).astype(str)
+years=np.arange(2018,2019).astype(str)
 
-do_cum=0
-cum_name='' ; cum_name2='cumulative'
-
-ni=2121 ; nj=729
-
-if do_cum:
-    plotvar=np.zeros((ni,nj))*np.nan
-    cum_name='_cumu'
-    cum_name2='cumulative'
     
 # years=['2018','2022']
 # years=['2022']
 # years=['2018']
 
-wildcard='*'
-files = sorted(glob(raw_data_path+wildcard))
                 
-varnam='rBRR_21' ; lo=0 ; hi=1 ; extend='both' ; units='unitless'
+varnam='r_TOA_21' ; lo=0 ; hi=1 ; extend='both' ; units='unitless'
 # varnam='albedo_bb_planar_sw' ; lo=0.3 ; hi=0.85 ; extend='both' ; units='unitless'
 # varnam='AOD_550' ; lo=0. ; hi=0.25 ; extend='both' ; units='unitless'
-for i,file in enumerate(files):
-    # if i==0:
-    if i>=0:
-        datex=pd.to_datetime(file.split('/')[-1][0:10]).strftime('%Y-%m-%d')
-        print(datex)
+
+for year in years:
+
+    # start_dt = date(int(year), 5, 20)
+    # end_dt = date(int(year), 9, 2)
+
+    dates=datesx(date(int(year), 8, 10),date(int(year), 8, 10))
     
-        file = rasterio.open(raw_data_path+datex+'_'+varnam+'.tif')
+    for datex in dates:
+    
+        file = rasterio.open(raw_data_path+year+'/'+datex+'_'+varnam+'.tif')
         # profile_S3=SWIR1x.profile
         r=file.read(1)
         
@@ -92,44 +96,9 @@ for i,file in enumerate(files):
         nj=np.shape(r)[1]
         # print(ni,nj)
         
-        if do_cum:
-            v=np.where(~np.isnan(r))
-            plotvar[v]=r[v]
-        else:
-            plotvar=r
-    
-        # r=ds.variables['albedo_spectral_planar_20'].values
-        # r=ds.variables['rBRR_21'].values
-        
-        # lat=ds.variables['lon'].values
-        # lon=ds.variables['lat'].values
-        
-    
-        
-        
-        # subset_it=1 # subset south Greenland Q transect
-        
-        # if subset_it:
-        #     xc0=ni-1000 ; xc1=ni # wider and taller
-        #     yc0=nj-1000 ; yc1=nj
-        
-        #     xc0=0 ; xc1=ni-1000 # wider and taller
-        #     yc0=0 ; yc1=nj-1000
-        
-        #     xc0=0 ; xc1=nj-1
-        #     yc0=2500 ; yc1=ni-1
-        #     yc0=1500 ; yc1=ni-1 # taller
-            
-        #     nix=xc1-xc0+1
-        #     njx=yc1-yc0+1
-        # wo=0
-        # if wo:
-        #     opath='/Users/jason/0_dat/S3/SICE3/'+var+'/'
-        #     os.system('mkdir -p '+opath)
-        #     np.save(opath+datex+cum_name+'.npy', plotvar[yc0:yc1,xc0:xc1])#, allow_pickle=True, fix_imports=True)
+        plotvar=r
     
         do_plot=1
-        
         if do_plot:
             plt.close()
             plt.clf()
@@ -176,10 +145,7 @@ for i,file in enumerate(files):
             
             cc=0
             
-            if do_cum:
-                units_title=varnam+'\n'+cum_name2+',\n'+units
-            else:
-                units_title=units
+            units_title=units
             
             plt.text(1.02, 0.96,datex+'\n'+varnam, fontsize=fs*1.2,
                      transform=ax.transAxes, color='k') ; cc+=1. 
@@ -189,7 +155,7 @@ for i,file in enumerate(files):
             
             plt.text(1.01, 0.005,'Sentinel-3 SICEv3\nGEUS, ESA NoR', fontsize=fs,
                      transform=ax.transAxes, color='b') ; cc+=1. 
-            ly='p'
+            ly='x'
             
             if ly == 'x':
                  plt.show() 
@@ -199,8 +165,5 @@ for i,file in enumerate(files):
             if ly == 'p':
                  figpath='/Users/jason/0_dat/S3/opendap/Figs/'+varnam+'/'
                  os.system('mkdir -p '+figpath)
-                 if do_cum:
-                     figpath='/Users/jason/0_dat/S3/Figs/'+varnam+'/'+cum_name2+'/'
-                 os.system('mkdir -p '+figpath)
-                 figname=datex+cum_name
+                 figname=datex
                  plt.savefig(figpath+figname+'.png', bbox_inches='tight', dpi=DPI, facecolor='w', edgecolor='k')

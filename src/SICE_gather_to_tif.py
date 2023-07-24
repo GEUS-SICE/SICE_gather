@@ -33,7 +33,7 @@ from pathlib import Path
 from datetime import date, timedelta
 
 if os.getlogin() == 'jason':
-    base_path='/Users/jason/Dropbox/S3/SICE_OpenDAP/'
+    base_path='/Users/jason/Dropbox/S3/SICE_gather/'
     output_base_path = '/Users/jason/0_dat/S3/opendap/'
     # output_base_path = '/Users/jason/Dropbox/S3/NDSI/S3/'
 
@@ -131,41 +131,12 @@ for year in years:
     # bands=['sza']
     # bands=['r_TOA_21']
     bands=['r_TOA_04'] # greenish
-    bands=['r_TOA_06','r_TOA_08'] # redish
-    # bands=['rBRR_01']
-    # bands=['rBRR_21']
+    bands=['r_TOA_06','r_TOA_08'] 
     
-    region_name='SSW_Greenland_62N_47W'
-    # area of interest in espg:4326
-    lat_n = 62.
-    lat_s = 61.
-    lon_w = -48.5
-    lon_e = -46.5
-    # lon_e= -46.515023
-    # lon_w= -48.354069
-    # lat_n= 62.047626
-    # lat_s= 60.863512
-    
-    # region_name='SSW_Greenland'
-    # lat_n,lon_w= 65.36772130, -52.05379077
-    # lat_s,lon_e=60.98178011, -43.16065323
-    
-    # region_name='SW_Greenland'
-    # lat_n,lon_w=69.68753065, -51.80731500
-    # lat_s,lon_e=60.46478492, -43.22330974
-    
-    # region_name='S_Greenland'
-    # lat_n,lon_w=70.20071592, -53.15750955
-    # lat_s,lon_e=60.34094943, -34.49951503
-
     region_name='Greenland'
-    # lat_n,lon_w=81.60314867, -87.18349214
     lat_n,lon_w=83, -99
-    # lat_s,lon_e=60.34094943, -34.49951503    
     lat_s,lon_e=50., -21
-    # lat_n,lon_w= 83.773537, -87.18349214
-    # lat_s,lon_e= 59.596106, -21.396449 
-
+    
     # region_name='KAN'
     # lat_n,lon_w=67.70865875, -48.07866852
     # lat_s,lon_e=66.92159286, -46.82639000
