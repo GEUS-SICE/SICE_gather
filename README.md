@@ -1,6 +1,6 @@
 # SICE_gather
 
-@author: Rasmus Nielsen (rabni@geus.dk) and Jason Box (jeb@geus.dk)
+@author: Rasmus Bahbah Nielsen (rabni@geus.dk) and Jason Box (jeb@geus.dk)
 
 to read from Thredds server at https://thredds.geus.dk/thredds/catalog/SICEvEDC_500m/catalog.html
 
