@@ -77,7 +77,11 @@ def multimaps(area, month, var, base_folder):
                         data = np.tile(z * np.nan, (len(days), 1, 1))
                         start = 1
     
-                    data[i, :, :] = z
+                    try:
+                        data[i,:,:] = z
+                    except Exception as e:
+                        print(f'Skipping date: {d}, due to:')
+                        print(e)
             else:
                 print(f'{v} does not exist as a SICE variable. Please check on the SICE_gather GitHub for variable names.')
     
@@ -134,7 +138,7 @@ def exporttiff(x, y, z, crs, path, filename):
 
 
 if __name__ == "__main__":
-    months = ['2018-09']  # List of months to compute, in format "yyyy-mm"
+    months = ['2023-08']  # List of months to compute, in format "yyyy-mm"
     var = ['grain_diameter']  # List of variables creating monthly maps
     base = os.path.abspath('..')  # Path to repo
     area = 'Greenland'  # Area you want to map
