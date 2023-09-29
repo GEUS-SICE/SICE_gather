@@ -2,7 +2,17 @@
 """
 Created on Thu Sep 28 11:51:12 2023
 
-@author: rabni
+@author: rabni and jeb
+
+variables available, can take just what are needed instead of gathering the heavy product
+
+['ANG', 'AOD_550', 'O3_SICE', 'al', 'albedo_bb_planar_sw', 'albedo_bb_spherical_sw', 
+ 'albedo_spectral_planar_01'.. 'albedo_spectral_planar_21',
+ 'cloud_mask', 'crs', 'cv1', 'cv2', 'factor', 'grain_diameter', 'isnow', 'lat', 'lon', 'r0', 
+ 'rBRR_01', .. 'rBRR_21', 
+ 'r_TOA_01', .. 'r_TOA_21', 'saa', 'snow_specific_surface_area', 'sza',
+ 'threshold', 'vaa', 'vza']
+
 """
 
 import rasterio
@@ -14,6 +24,10 @@ from pyproj import CRS
 import xarray as xr
 from rasterio.transform import Affine
 
+
+#!! means where to save the output
+base_folder='/Users/jason/0_dat/S3/monthly/'
+os.system('chdir '+base_folder)
 
 def date_delta(first_day, delta):
     
@@ -128,6 +142,7 @@ def exporttiff(x, y, z, crs, path, filename):
     height=z.shape[0],
     width=z.shape[1],
     count=1,
+    compress='lzw',
     dtype=z.dtype,
     crs=crs,
     transform=transform,
@@ -138,8 +153,14 @@ def exporttiff(x, y, z, crs, path, filename):
 
 
 if __name__ == "__main__":
-    months = ['2023-08']  # List of months to compute, in format "yyyy-mm"
-    var = ['grain_diameter']  # List of variables creating monthly maps
-    base = os.path.abspath('..')  # Path to repo
-    area = 'Greenland'  # Area you want to map
-    multimaps(area, months, var, base)
+    years=np.arange(2017,2023+1).astype(str)
+    months=np.arange(6,9).astype(str)
+    for monthx in months:
+        for year in years:
+            print(year,monthx)
+            months = [year+'-'+monthx.zfill(2)]  # List of months to compute, in format "yyyy-mm"
+            # var = ['grain_diameter']  # List of variables creating monthly maps
+            var = ['albedo_bb_planar_sw']  # List of variables creating monthly maps
+            base = os.path.abspath('..')  # Path to repo
+            area = 'Greenland'  # Area you want to map
+            multimaps(area, months, var, base)

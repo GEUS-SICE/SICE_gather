@@ -35,6 +35,7 @@ from datetime import date, timedelta
 if os.getlogin() == 'jason':
     base_path='/Users/jason/Dropbox/S3/SICE_gather/'
     output_base_path = '/Users/jason/0_dat/S3/opendap/'
+    # output_base_path = '/Users/jason/Dropbox/S3_temp/'
     # output_base_path = '/Users/jason/Dropbox/S3/NDSI/S3/'
 
 os.chdir(base_path)
@@ -86,14 +87,14 @@ def ExportGeoTiff(x,y,z,crs,path):
 
 years=np.arange(2017,2023+1).astype(str)
 years=np.arange(2019,2020).astype(str)
-# years=np.arange(2017,2019).astype(str)
-# years=np.arange(2021,2022).astype(str)
-# years=np.arange(2023,2024).astype(str)
-
+years=np.arange(2017,2018).astype(str)
+years=np.arange(2021,2022).astype(str)
+years=np.arange(2023,2024).astype(str)
+ 
 for year in years:
 
-    dates=datesx(date(int(year), 8, 2),date(int(year), 8, 2))
-    dates=datesx(date(int(year), 7, 1),date(int(year), 9, 2))
+    dates=datesx(date(int(year), 7, 9),date(int(year), 9, 30))
+    # dates=datesx(date(int(year), 7, 9),date(int(year), 7, 9))
     
     # a=np.array(list(ds.keys()))
     # a=np.sort(a)
@@ -126,12 +127,16 @@ for year in years:
     bands=['rBRR_01','rBRR_21']
     bands=['rBRR_01','rBRR_21','rBRR_10','rBRR_11']
     bands=['r_TOA_01','r_TOA_10','r_TOA_11','r_TOA_21']
-    bands=['r_TOA_02','r_TOA_10','r_TOA_11','r_TOA_21']
-    bands=['albedo_bb_planar_sw']
+    bands = ["r_TOA_02", "r_TOA_04", "r_TOA_06", "r_TOA_08", "r_TOA_21"]
+    # bands = ["r_TOA_02", "r_TOA_06", "r_TOA_08", "r_TOA_21"]
+    # bands=['r_TOA_10','r_TOA_11']
+
+    # bands=['r_TOA_02','r_TOA_10','r_TOA_11','r_TOA_21']
+    # bands=['albedo_bb_planar_sw']
     # bands=['sza']
-    # bands=['r_TOA_21']
-    bands=['r_TOA_04'] # greenish
-    bands=['r_TOA_06','r_TOA_08'] 
+    bands=['r_TOA_21']
+    # bands=['r_TOA_04'] # greenish
+    # bands=['r_TOA_06','r_TOA_08','r_TOA_02'] 
     
     region_name='Greenland'
     lat_n,lon_w=83, -99
@@ -151,6 +156,7 @@ for year in years:
     x_slice = slice(int(west_x),int(east_x))
     
     output_path=output_base_path + os.sep + region_name + os.sep + year + os.sep
+    # output_path=output_base_path + os.sep
     os.system('mkdir -p '+output_path)
     
     # loop over dates
@@ -164,7 +170,7 @@ for year in years:
             
             if not(test_file.is_file()):
                 try:
-                    ds = xr.open_dataset(f'https://thredds.geus.dk/thredds/dodsC/SICE_Greenland_500m/{DATASET_ID}')
+                    ds = xr.open_dataset(f'https://thredds.geus.dk/thredds/dodsC/SICEvEDC_500m/Greenland/{DATASET_ID}')
                     print(var)
                     yshape,xshape = np.shape(ds[var])
                     
